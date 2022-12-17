@@ -1,0 +1,92 @@
+class Solution:
+    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        pacific,atlantic = {},{}
+        def mn(x,y,z):
+            #print(x,y,z)
+            if [x,y] in z: return False
+            z.append([x,y])
+            if (x,y) in pacific: return pacific[(x,y)]
+            if x == 0 or y == 0:
+                #print("true")
+                pacific[(x,y)] = True
+                return True
+            elif x < len(heights) and y < len(heights[0]):
+                curr1,curr2,curr3,curr4 = False, False, False, False
+                if heights[x][y] >= heights[x-1][y]:
+                    if not curr1 or curr2 or curr3 or curr4:
+                        curr1 = mn(x-1,y,z)
+                if heights[x][y] >= heights[x][y-1]:
+                    if not curr1 or curr2 or curr3 or curr4:
+                        curr2 = mn(x,y-1,z)
+                if x < len(heights)-1 and heights[x][y] >= heights[x+1][y]:
+                    if not curr1 or curr2 or curr3 or curr4:
+                        curr3 = mn(x+1,y,z)
+                if y < len(heights[0])-1 and heights[x][y] >= heights[x][y+1]:
+                    if not curr1 or curr2 or curr3 or curr4:
+                        curr4 = mn(x,y+1,z)
+                if curr1 or curr2 or curr3 or curr4:
+                    pacific[(x,y)] = True
+                    return True
+                else:
+                    #pacific[(x,y)] = False
+                    return False
+            else:
+                #pacific[(x,y)] = False
+                return False
+        def ms(x,y,z):
+            #print(x,y,z)
+            if [x,y] in z: 
+                return
+            z.append([x,y])
+            if (x,y) in atlantic: return atlantic[(x,y)]
+            if x == len(heights)-1 or y == len(heights[0])-1:
+                #print("true")
+                atlantic[(x,y)] = True
+                return True
+            elif x > -1 and y > -1 and x < len(heights)-1 and y < len(heights[0])-1:
+                curr1,curr2,curr3,curr4 = False, False, False, False
+                if x < len(heights)-1 and heights[x][y] >= heights[x+1][y]:
+                    if not curr1 or curr2 or curr3 or curr4:
+                        curr3 = ms(x+1,y,z)
+                if y < len(heights[0])-1 and heights[x][y] >= heights[x][y+1]:
+                    if not curr1 or curr2 or curr3 or curr4:
+                        curr4 = ms(x,y+1,z)
+                if x>0 and heights[x][y] >= heights[x-1][y]:
+                    if not curr1 or curr2 or curr3 or curr4:
+                        curr1 = ms(x-1,y,z)
+                if y>0 and heights[x][y] >= heights[x][y-1]:
+                    if not curr1 or curr2 or curr3 or curr4:
+                        curr2 = ms(x,y-1,z)
+                if curr1 or curr2 or curr3 or curr4:
+                    atlantic[(x,y)] = True
+                    return True
+                else:
+                    #atlantic[(x,y)] = False
+                    return False
+            else:
+                #atlantic[(x,y)] = False
+                return False
+        for i in range(0,len(heights)):
+            for z in range(0,len(heights[0])):
+                mn(i,z,[])
+        for i in range(len(heights)-1,-1,-1):
+            for z in range(len(heights[0])-1,-1,-1):
+                ms(i,z,[])
+        ans = []
+        for x in atlantic:
+            if atlantic[x]:
+                if x in pacific and pacific[x]:
+                    ans.append(x)
+        #print(atlantic)
+        #print(pacific)
+
+        return ans
+
+                    
+            
+        
+            
+
+
+
+
